@@ -6,6 +6,13 @@
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
+## 原型效果图  &  Figma 设计稿
+<img width="2477" alt="image" src="https://github.com/user-attachments/assets/2cce557c-8a44-4f62-8279-c27a6bfbe05c" />
+
+<img width="2548" alt="image" src="https://github.com/user-attachments/assets/bf7fe167-b3af-4f18-9be7-e1597ec0f55a" />
+
+
+
 ## 📋 项目概述
 
 这是一个基于iPhone 15 Pro尺寸设计的高保真播客应用原型，旨在展示现代移动端播客应用的用户界面和交互体验。该原型包含了播客应用的核心功能页面，以HTML、CSS和基础JavaScript实现，使用Tailwind CSS框架构建响应式界面。
@@ -81,5 +88,9 @@
 - 📊 原型中的数据为静态展示，不具备实际的数据处理能力
 - 🌐 最佳查看体验请使用现代浏览器（Chrome、Firefox、Safari等）
 
+
+## 联系我
+
+<img  width="300" src="https://github.com/user-attachments/assets/52a68861-8786-44bd-b02b-5c862b848bb0"/>
 
 
