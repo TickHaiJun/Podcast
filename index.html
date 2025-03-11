@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>播客应用原型</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f0f2f5;
+        }
+        .prototype-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(375px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background-color: white;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            border: 10px solid #1a1a1a;
+        }
+        .screen {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        .screen iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .screen-label {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+        }
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 30px;
+            background-color: #1a1a1a;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-gray-800 text-white p-6">
+        <h1 class="text-3xl font-bold">播客应用原型设计</h1>
+        <p class="mt-2">基于iPhone 15 Pro尺寸的高保真原型</p>
+    </header>
+
+    <div class="prototype-container">
+        <!-- 首页 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="screen">
+                <iframe src="home.html"></iframe>
+            </div>
+            <div class="screen-label">首页</div>
+        </div>
+
+        <!-- 播放页面 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="screen">
+                <iframe src="player.html"></iframe>
+            </div>
+            <div class="screen-label">播放页面</div>
+        </div>
+
+        <!-- 发现页面 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="screen">
+                <iframe src="discover.html"></iframe>
+            </div>
+            <div class="screen-label">发现页面</div>
+        </div>
+
+        <!-- 搜索页面 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="screen">
+                <iframe src="search.html"></iframe>
+            </div>
+            <div class="screen-label">搜索页面</div>
+        </div>
+
+        <!-- 个人中心 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="screen">
+                <iframe src="profile.html"></iframe>
+            </div>
+            <div class="screen-label">个人中心</div>
+        </div>
+
+        <!-- 播客详情 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="screen">
+                <iframe src="podcast-detail.html"></iframe>
+            </div>
+            <div class="screen-label">播客详情</div>
+        </div>
+
+        <!-- 设置页面 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="screen">
+                <iframe src="settings.html"></iframe>
+            </div>
+            <div class="screen-label">设置页面</div>
+        </div>
+
+        <!-- 订阅管理 -->
+        <div class="phone-frame">
+            <div class="notch"></div>
+            <div class="screen">
+                <iframe src="subscriptions.html"></iframe>
+            </div>
+            <div class="screen-label">订阅管理</div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white p-6 mt-10">
+        <p>© 2023 播客应用原型设计 - 所有设计仅用于演示</p>
+    </footer>
+</body>
+</html>

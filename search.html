@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>播客搜索页面</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .status-bar {
+            height: 44px;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 12px;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 83px;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding-bottom: 30px;
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 8px;
+            width: 20%;
+            color: #8e8e93;
+        }
+        .tab-item.active {
+            color: #ff2d55;
+        }
+        .tab-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+        .tab-label {
+            font-size: 10px;
+        }
+        .content {
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+        .search-header {
+            margin-bottom: 20px;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 10px;
+            padding: 10px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+        }
+        .search-icon {
+            color: #8e8e93;
+            margin-right: 10px;
+        }
+        .search-input {
+            flex: 1;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            background: transparent;
+        }
+        .search-cancel {
+            color: #ff2d55;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .section-title {
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 16px;
+            margin-top: 24px;
+        }
+        .recent-searches {
+            margin-bottom: 24px;
+        }
+        .recent-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .recent-text {
+            display: flex;
+            align-items: center;
+        }
+        .recent-icon {
+            color: #8e8e93;
+            margin-right: 12px;
+        }
+        .recent-query {
+            font-size: 16px;
+        }
+        .clear-icon {
+            color: #8e8e93;
+        }
+        .trending-searches {
+            margin-bottom: 24px;
+        }
+        .trending-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .trending-number {
+            font-weight: 700;
+            font-size: 16px;
+            width: 24px;
+            margin-right: 12px;
+            color: #333;
+        }
+        .trending-query {
+            font-size: 16px;
+            flex: 1;
+        }
+        .trending-label {
+            font-size: 12px;
+            padding: 4px 8px;
+            background: #f2f2f7;
+            border-radius: 4px;
+            color: #8e8e93;
+        }
+        .search-results {
+            display: none; /* 默认隐藏搜索结果 */
+        }
+        .result-item {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .result-cover {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+        }
+        .result-info {
+            padding: 12px;
+            flex: 1;
+        }
+        .result-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        .result-author {
+            color: #8e8e93;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        .result-details {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #8e8e93;
+        }
+        .result-dot {
+            margin: 0 6px;
+        }
+        .mini-player {
+            position: fixed;
+            bottom: 83px;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #e0e0e0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .mini-cover {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            margin-right: 12px;
+        }
+        .mini-info {
+            flex: 1;
+        }
+        .mini-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .mini-author {
+            color: #8e8e93;
+            font-size: 12px;
+        }
+        .mini-controls {
+            display: flex;
+            align-items: center;
+        }
+        .mini-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background: #f2f2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+        }
+        .mini-play {
+            background: #ff2d55;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi ml-1"></i>
+            <i class="fas fa-battery-full ml-1"></i>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+        <!-- 搜索头部 -->
+        <div class="search-header">
+            <div class="search-bar">
+                <div class="search-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <input type="text" class="search-input" placeholder="搜索播客、主题或创作者">
+                <div class="search-cancel">取消</div>
+            </div>
+        </div>
+
+        <!-- 搜索历史 -->
+        <div class="recent-searches">
+            <h2 class="section-title">最近搜索</h2>
+            <div class="recent-item">
+                <div class="recent-text">
+                    <div class="recent-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="recent-query">科技创新</div>
+                </div>
+                <div class="clear-icon">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="recent-item">
+                <div class="recent-text">
+                    <div class="recent-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="recent-query">商业分析</div>
+                </div>
+                <div class="clear-icon">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="recent-item">
+                <div class="recent-text">
+                    <div class="recent-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="recent-query">健康生活</div>
+                </div>
+                <div class="clear-icon">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 热门搜索 -->
+        <div class="trending-searches">
+            <h2 class="section-title">热门搜索</h2>
+            <div class="trending-item">
+                <div class="trending-number">1</div>
+                <div class="trending-query">人工智能</div>
+                <div class="trending-label">热门</div>
+            </div>
+            <div class="trending-item">
+                <div class="trending-number">2</div>
+                <div class="trending-query">投资理财</div>
+                <div class="trending-label">新上升</div>
+            </div>
+            <div class="trending-item">
+                <div class="trending-number">3</div>
+                <div class="trending-query">心理健康</div>
+                <div class="trending-label">热门</div>
+            </div>
+            <div class="trending-item">
+                <div class="trending-number">4</div>
+                <div class="trending-query">职场成长</div>
+                <div class="trending-label">热门</div>
+            </div>
+            <div class="trending-item">
+                <div class="trending-number">5</div>
+                <div class="trending-query">历史故事</div>
+                <div class="trending-label">新上升</div>
+            </div>
+        </div>
+
+        <!-- 搜索结果（默认隐藏） -->
+        <div class="search-results">
+            <h2 class="section-title">搜索结果</h2>
+            <div class="result-item">
+                <img src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="result-cover" alt="播客封面">
+                <div class="result-info">
+                    <div class="result-title">科技创新前沿</div>
+                    <div class="result-author">未来科技</div>
+                    <div class="result-details">
+                        <span>科技</span>
+                        <span class="result-dot">•</span>
+                        <span>每周更新</span>
+                    </div>
+                </div>
+            </div>
+            <div class="result-item">
+                <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="result-cover" alt="播客封面">
+                <div class="result-info">
+                    <div class="result-title">科技与生活</div>
+                    <div class="result-author">科技生活家</div>
+                    <div class="result-details">
+                        <span>科技</span>
+                        <span class="result-dot">•</span>
+                        <span>每周二更新</span>
+                    </div>
+                </div>
+            </div>
+            <div class="result-item">
+                <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="result-cover" alt="播客封面">
+                <div class="result-info">
+                    <div class="result-title">科技创业者访谈</div>
+                    <div class="result-author">创业邦</div>
+                    <div class="result-details">
+                        <span>科技</span>
+                        <span class="result-dot">•</span>
+                        <span>每周五更新</span>
+                    </div>

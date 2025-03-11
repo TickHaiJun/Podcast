@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>播客订阅管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .status-bar {
+            height: 44px;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 12px;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 83px;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding-bottom: 30px;
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 8px;
+            width: 20%;
+            color: #8e8e93;
+        }
+        .tab-item.active {
+            color: #ff2d55;
+        }
+        .tab-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+        .tab-label {
+            font-size: 10px;
+        }
+        .content {
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+        .nav-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-right: 12px;
+        }
+        .header-title {
+            font-weight: 700;
+            font-size: 20px;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 10px;
+            padding: 10px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .search-icon {
+            color: #8e8e93;
+            margin-right: 10px;
+        }
+        .search-input {
+            flex: 1;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            background: transparent;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            margin-top: 24px;
+        }
+        .section-title {
+            font-weight: 700;
+            font-size: 20px;
+        }
+        .section-action {
+            color: #ff2d55;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .subscription-list {
+            margin-bottom: 24px;
+        }
+        .subscription-item {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        .subscription-cover {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+        }
+        .subscription-info {
+            padding: 12px;
+            flex: 1;
+        }
+        .subscription-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        .subscription-author {
+            color: #8e8e93;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .subscription-stats {
+            display: flex;
+            font-size: 12px;
+            color: #8e8e93;
+        }
+        .subscription-stat {
+            display: flex;
+            align-items: center;
+            margin-right: 12px;
+        }
+        .subscription-stat i {
+            margin-right: 4px;
+        }
+        .subscription-actions {
+            display: flex;
+            align-items: center;
+            padding-right: 12px;
+        }
+        .subscription-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: #f2f2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+            font-size: 14px;
+        }
+        .subscription-play {
+            background: #ff2d55;
+            color: white;
+        }
+        .category-tabs {
+            display: flex;
+            overflow-x: auto;
+            padding: 8px 0;
+            margin: 0 -16px;
+            padding-left: 16px;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 16px;
+        }
+        .category-tab {
+            flex: 0 0 auto;
+            padding: 8px 16px;
+            background: white;
+            border-radius: 20px;
+            margin-right: 10px;
+            font-size: 14px;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .category-tab.active {
+            background: #ff2d55;
+            color: white;
+        }
+        .mini-player {
+            position: fixed;
+            bottom: 83px;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #e0e0e0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .mini-cover {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            margin-right: 12px;
+        }
+        .mini-info {
+            flex: 1;
+        }
+        .mini-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .mini-author {
+            color: #8e8e93;
+            font-size: 12px;
+        }
+        .mini-controls {
+            display: flex;
+            align-items: center;
+        }
+        .mini-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background: #f2f2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+        }
+        .mini-play {
+            background: #ff2d55;
+            color: white;
+        }
+        .empty-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            background: #f2f2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 32px;
+            color: #8e8e93;
+        }
+        .empty-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .empty-description {
+            color: #8e8e93;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .empty-btn {
+            background: #ff2d55;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi ml-1"></i>
+            <i class="fas fa-battery-full ml-1"></i>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+        <!-- 导航头部 -->
+        <div class="nav-header">
+            <div class="back-btn">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            <div class="header-title">我的订阅</div>
+        </div>
+        
+        <!-- 搜索栏 -->
+        <div class="search-bar">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <input type="text" class="search-input" placeholder="搜索我的订阅">
+        </div>
+
+        <!-- 分类标签 -->
+        <div class="category-tabs">
+            <div class="category-tab active">全部</div>
+            <div class="category-tab">最近更新</div>
+            <div class="category-tab">科技</div>
+            <div class="category-tab">商业</div>
+            <div class="category-tab">教育</div>
+            <div class="category-tab">娱乐</div>
+            <div class="category-tab">健康</div>
+        </div>
+
+        <!-- 订阅列表 -->
+        <div class="subscription-list">
+            <div class="section-header">
+                <div class="section-title">已订阅播客</div>
+                <div class="section-action">编辑</div>
+            </div>
+            
+            <div class="subscription-item">
+                <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="subscription-cover" alt="播客封面">
+                <div class="subscription-info">
+                    <div class="subscription-title">科技早知道</div>
+                    <div class="subscription-author">极客公园</div>
+                    <div class="subscription-stats">
+                        <div class="subscription-stat">
+                            <i class="fas fa-podcast"></i>
+                            <span>128集</span>
+                        </div>
+                        <div class="subscription-stat">
+                            <i class="fas fa-clock"></i>
+                            <span>今天更新</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="subscription-actions">
+                    <div class="subscription-btn subscription-play">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subscription-item">
+                <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="subscription-cover" alt="播客封面">
+                <div class="subscription-info">
+                    <div class="subscription-title">商业就是这样</div>
+                    <div class="subscription-author">李翔商业内参</div>
+                    <div class="subscription-stats">
+                        <div class="subscription-stat">
+                            <i class="fas fa-podcast"></i>
+                            <span>95集</span>
+                        </div>
+                        <div class="subscription-stat">
+                            <i class="fas fa-clock"></i>
+                            <span>3天前更新</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="subscription-actions">
+                    <div class="subscription-btn subscription-play">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subscription-item">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="subscription-cover" alt="播客封面">
+                <div class="subscription-info">
+                    <div class="subscription-title">故事FM</div>
+                    <div class="subscription-author">马东</div>
+                    <div class="subscription-stats">
+                        <div class="subscription-stat">
+                            <i class="fas fa-podcast"></i>
+                            <span>256集</span>
+                        </div>
+                        <div class="subscription-stat">
+                            <i class="fas fa-clock"></i>
+                            <span

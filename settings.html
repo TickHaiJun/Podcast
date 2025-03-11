@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>播客设置页面</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .status-bar {
+            height: 44px;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 12px;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 83px;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding-bottom: 30px;
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 8px;
+            width: 20%;
+            color: #8e8e93;
+        }
+        .tab-item.active {
+            color: #ff2d55;
+        }
+        .tab-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+        .tab-label {
+            font-size: 10px;
+        }
+        .content {
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+        .nav-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-right: 12px;
+        }
+        .header-title {
+            font-weight: 700;
+            font-size: 20px;
+        }
+        .settings-group {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .settings-header {
+            padding: 12px 16px;
+            font-weight: 600;
+            color: #8e8e93;
+            font-size: 14px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+        .settings-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+        .settings-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: #f2f2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+            color: #ff2d55;
+        }
+        .settings-text {
+            flex: 1;
+            font-size: 16px;
+        }
+        .settings-value {
+            color: #8e8e93;
+            font-size: 16px;
+            margin-right: 8px;
+        }
+        .settings-arrow {
+            color: #c7c7cc;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e4e4e4;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: #ff2d55;
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+        .mini-player {
+            position: fixed;
+            bottom: 83px;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #e0e0e0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .mini-cover {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            margin-right: 12px;
+        }
+        .mini-info {
+            flex: 1;
+        }
+        .mini-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .mini-author {
+            color: #8e8e93;
+            font-size: 12px;
+        }
+        .mini-controls {
+            display: flex;
+            align-items: center;
+        }
+        .mini-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background: #f2f2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+        }
+        .mini-play {
+            background: #ff2d55;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi ml-1"></i>
+            <i class="fas fa-battery-full ml-1"></i>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+        <!-- 导航头部 -->
+        <div class="nav-header">
+            <div class="back-btn">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            <div class="header-title">设置</div>
+        </div>
+        
+        <!-- 账户设置 -->
+        <div class="settings-group">
+            <div class="settings-header">账户</div>
+            <div class="settings-item">
+                <div class="settings-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="settings-text">个人资料</div>
+                <div class="settings-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="settings-text">隐私设置</div>
+                <div class="settings-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="settings-text">通知设置</div>
+                <div class="settings-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 播放设置 -->
+        <div class="settings-group">
+            <div class="settings-header">播放</div>
+            <div class="settings-item">
+                <div class="settings-icon">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <div class="settings-text">音频质量</div>
+                <div class="settings-value">高</div>
+                <div class="settings-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-icon">
+                    <i class="fas fa-forward"></i>
+                </div>
+                <div class="settings-text">跳过片头</div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="settings-item">
+                <div class="settings-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="settings-text">睡眠定时器</div>
+                <div class="settings-value">关闭</div>
+                <div class="settings-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 下载设置 -->
+        <div class="settings-group">
+            <div class="settings-header">下载</div>
+            <div class="settings-item">
+                <div class="settings-icon">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <div class="settings-text">仅在WiFi下下载</div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="settings-item">
+                <div class="settings-icon">
+                    <i class="fas fa-trash"></i>
+                </div>
+                <div class="settings-text">自动删除已播放内容</div>
+                <label class="toggle-switch">
+                    <input type="checkbox">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="settings-item">
+                <div class="settings-icon">
+                    <i class="fas fa-hdd"></i>
+                </div>
+                <div class="settings-text">存储空间</div>
+                <div class="settings-value">1.2GB</div>
+                <div class="settings-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 其他设置 -->
+        <div class="settings-group">
+            <div class="settings-header">其他</div>
+            <div class="settings-item">
+                <div class="settings-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="settings-text">帮助与反馈</div>
+                <div class="settings-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="settings-item">
+                <div class="settings-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="settings-text">关于</div>
+                <div class="settings-value">v1.0.0</div>
+                <div class="settings-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 迷你播放器 -->
+    <div class="mini-player">
+        <img src="https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="mini-cover" alt="播客封面">
+        <div class="mini-info">
+            <div class="mini-title">如何提高工作效率：实用技巧分享</div>
+            <div class="mini-author">效率人生</div>
+        </div>
+        <div class="mini-controls">
+            <div class="mini-btn">
+                <i class="fas fa-step-backward"></i>
+            </div>
+            <div class="mini-btn mini-play">
+                <i class="fas fa-play"></i>
+            </div>
+            <div class="mini-btn"

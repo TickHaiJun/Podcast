@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>播客个人中心</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .status-bar {
+            height: 44px;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 12px;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 83px;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding-bottom: 30px;
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 8px;
+            width: 20%;
+            color: #8e8e93;
+        }
+        .tab-item.active {
+            color: #ff2d55;
+        }
+        .tab-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+        .tab-label {
+            font-size: 10px;
+        }
+        .content {
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            object-fit: cover;
+            margin-right: 16px;
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .profile-info {
+            flex: 1;
+        }
+        .profile-name {
+            font-weight: 700;
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+        .profile-email {
+            color: #8e8e93;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .profile-edit-btn {
+            background: #f2f2f7;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .stat-number {
+            font-weight: 700;
+            font-size: 24px;
+            margin-bottom: 4px;
+            color: #ff2d55;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #8e8e93;
+        }
+        .section-title {
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 16px;
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-link {
+            color: #ff2d55;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .menu-list {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        .menu-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: #f2f2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+            color: #ff2d55;
+        }
+        .menu-text {
+            flex: 1;
+            font-size: 16px;
+        }
+        .menu-arrow {
+            color: #c7c7cc;
+        }
+        .recent-activity {
+            margin-bottom: 24px;
+        }
+        .activity-item {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .activity-cover {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+        }
+        .activity-info {
+            padding: 12px;
+            flex: 1;
+        }
+        .activity-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .activity-details {
+            color: #8e8e93;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .mini-player {
+            position: fixed;
+            bottom: 83px;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #e0e0e0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .mini-cover {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            margin-right: 12px;
+        }
+        .mini-info {
+            flex: 1;
+        }
+        .mini-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .mini-author {
+            color: #8e8e93;
+            font-size: 12px;
+        }
+        .mini-controls {
+            display: flex;
+            align-items: center;
+        }
+        .mini-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background: #f2f2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+        }
+        .mini-play {
+            background: #ff2d55;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi ml-1"></i>
+            <i class="fas fa-battery-full ml-1"></i>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+        <h1 class="text-2xl font-bold mb-4">个人中心</h1>
+        
+        <!-- 个人资料 -->
+        <div class="profile-header">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="profile-avatar" alt="用户头像">
+            <div class="profile-info">
+                <div class="profile-name">李小明</div>
+                <div class="profile-email">xiaoming@example.com</div>
+                <div class="profile-edit-btn">编辑资料</div>
+            </div>
+        </div>
+
+        <!-- 统计数据 -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-number">42</div>
+                <div class="stat-label">已订阅</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">128</div>
+                <div class="stat-label">已收听</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">16</div>
+                <div class="stat-label">已收藏</div>
+            </div>
+        </div>
+
+        <!-- 最近活动 -->
+        <div class="recent-activity">
+            <div class="section-title">
+                <span>最近活动</span>
+                <span class="section-link">查看全部</span>
+            </div>
+            <div class="activity-item">
+                <img src="https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="activity-cover" alt="播客封面">
+                <div class="activity-info">
+                    <div class="activity-title">收听了《如何提高工作效率》</div>
+                    <div class="activity-details">
+                        <span>效率人生</span>
+                        <span>2小时前</span>
+                    </div>
+                </div>
+            </div>
+            <div class="activity-item">
+                <img src="https://images.unsplash.com/photo-1557672172-298e090bd0f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="activity-cover" alt="播客封面">
+                <div class="activity-info">
+                    <div class="activity-title">订阅了《科技未来》</div>
+                    <div class="activity-details">
+                        <span>科技频道</span>
+                        <span>昨天</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能菜单 -->
+        <div class="menu-list">
+            <div class="menu-item">
+                <div class="menu-icon">
+                    <i class="fas fa-download"></i>
+                </div>
+                <div class="menu-text">我的下载</div>
+                <div class="menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="menu-text">我的收藏</div>
+                <div class="menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="menu-text">收听历史</div>
+                <div class="menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置菜单 -->
+        <div class="menu-list">
+            <div class="menu-item">
+                <div class="menu-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="menu-text">通知设置</div>
+                <div class="menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="menu-text">应用设置</div>
+                <div class="menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="menu-text">帮助与反馈</div>
+                <div class="menu-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 迷你播放器 -->
+    <div class="mini-player">
+        <img src="https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="mini-cover" alt="播客封面">
+        <div class="mini-info">
+            <div

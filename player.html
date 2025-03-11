@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>播客播放页面</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .status-bar {
+            height: 44px;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 12px;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .player-container {
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: calc(100vh - 44px);
+        }
+        .nav-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .nav-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .podcast-cover-large {
+            width: 280px;
+            height: 280px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            object-fit: cover;
+        }
+        .podcast-info {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .podcast-title {
+            font-weight: 700;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+        .podcast-author {
+            color: #8e8e93;
+            font-size: 16px;
+        }
+        .player-controls {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        .progress-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 35%;
+            background: #ff2d55;
+            border-radius: 2px;
+        }
+        .progress-handle {
+            position: absolute;
+            top: 50%;
+            left: 35%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 6px;
+            background: #ff2d55;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #8e8e93;
+        }
+        .control-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            font-size: 18px;
+        }
+        .play-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 35px;
+            background: #ff2d55;
+            color: white;
+            font-size: 24px;
+        }
+        .episode-info {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .episode-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .episode-description {
+            color: #8e8e93;
+            font-size: 14px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .episode-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+        .episode-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #8e8e93;
+            font-size: 12px;
+        }
+        .episode-btn-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 状态栏 -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi ml-1"></i>
+            <i class="fas fa-battery-full ml-1"></i>
+        </div>
+    </div>
+
+    <!-- 播放器内容 -->
+    <div class="player-container">
+        <!-- 导航头部 -->
+        <div class="nav-header">
+            <div class="nav-btn">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="text-center">
+                <div class="text-xs font-medium">正在播放</div>
+            </div>
+            <div class="nav-btn">
+                <i class="fas fa-ellipsis-h"></i>
+            </div>
+        </div>
+
+        <!-- 播客封面 -->
+        <img src="https://images.unsplash.com/photo-1559523161-0fc0d8b38a7a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="podcast-cover-large" alt="播客封面">
+
+        <!-- 播客信息 -->
+        <div class="podcast-info">
+            <div class="podcast-title">如何提高工作效率：实用技巧分享</div>
+            <div class="podcast-author">效率人生</div>
+        </div>
+
+        <!-- 播放控制 -->
+        <div class="player-controls">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+                <div class="progress-handle"></div>
+            </div>
+            <div class="time-info">
+                <div>23:15</div>
+                <div>45:30</div>
+            </div>
+            <div class="control-buttons">
+                <div class="control-btn">
+                    <i class="fas fa-step-backward"></i>
+                </div>
+                <div class="control-btn">
+                    <i class="fas fa-backward"></i>
+                </div>
+                <div class="control-btn play-btn">
+                    <i class="fas fa-pause"></i>
+                </div>
+                <div class="control-btn">
+                    <i class="fas fa-forward"></i>
+                </div>
+                <div class="control-btn">
+                    <i class="fas fa-step-forward"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 剧集信息 -->
+        <div class="episode-info">
+            <div class="episode-title">第45期：高效工作的10个关键习惯</div>
+            <div class="episode-description">
+                在这一期节目中，我们邀请了时间管理专家张教授，为大家分享如何通过建立正确的工作习惯，显著提高工作效率。我们将讨论番茄工作法、任务分解技巧、注意力管理以及如何避免拖延症等实用方法。
+            </div>
+            <div class="episode-actions">
+                <div class="episode-btn">
+                    <div class="episode-btn-icon"><i class="fas fa-heart"></i></div>
+                    <div>喜欢</div>
+                </div>
+                <div class="episode-btn">
+                    <div class="episode-btn-icon"><i class="fas fa-download"></i></div>
+                    <div>下载</div>
+                </div>
+                <div class="episode-btn">
+                    <div class="episode-btn-icon"><i class="fas fa-share-alt"></i></div>
+                    <div>分享</div>
+                </div>
+                <div class="episode-btn">
+                    <div class="episode-btn-icon"><i class="fas fa-list"></i></div>
+                    <div>播放列表</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
